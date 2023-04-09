@@ -21,6 +21,8 @@ public class Homework {
 // платежей для полного погашения долга (total евро) совпадало с заданным в условии задачи
 // (months месяцев).
 
+  public static double ACCURACY = 0.0001;
+
   public static void main(String[] args) {
     double percent = 12.0;
     int month = 24;
@@ -30,4 +32,37 @@ public class Homework {
     // Начисленные проценты 51905,36
     // Долг + проценты 451905,36
 
+    double rateMonth = rate(total, percent);
+    System.out.printf("Процентная ставка в месяц %.6f%n", rateMonth);
   }
+
+  /**
+   * Поиск размера начисляемых ежемесячно процентов
+   *
+   * @param total   сумма кредитования
+   * @param percent ставка кредита
+   * @return размер начисляемых ежемесячно процентов
+   */
+  public static double rate(int total, double percent) {
+    double left = 0; // 0 точно меньше нашего ответа
+    double right = total; // x точно больше нашего ответа
+    double total1 = total * (1 + percent / 100);
+    // double total2 = -1;
+    while (right - left > ACCURACY) {
+      double mid = (left + right) / 2;
+      double total2 = total * mid * 12;
+      if (total2 == total1 - total) {
+        // если mid и есть наш квадратный корень - так почти никогда не бывает
+        return mid;
+      }
+      // если mid меньше настоящего квадратного корня
+      if (total2 < total1 - total) { // если mid меньше настоящего квадратного корня
+        left = mid; // мы не можем ничего добавить - может быть, нам не хватило совсем немного
+      } else { // не равно и не меньше, значит, больше
+        right = mid;
+      }
+    }
+    return left;
+  }
+
+}
