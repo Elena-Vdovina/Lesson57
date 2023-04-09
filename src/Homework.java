@@ -33,6 +33,8 @@ public class Homework {
     // Долг + проценты 451905,36
 
     double rateMonth = rate(total, percent);
+    double paymentMonth = payment(total, percent, month);
+
     System.out.printf("Процентная ставка в месяц %.6f%n", rateMonth);
   }
 
@@ -59,6 +61,34 @@ public class Homework {
       if (total2 < total1 - total) { // если mid меньше настоящего квадратного корня
         left = mid; // мы не можем ничего добавить - может быть, нам не хватило совсем немного
       } else { // не равно и не меньше, значит, больше
+        right = mid;
+      }
+    }
+    return left;
+  }
+
+  /**
+   * Поиск размера ежемесячного платежа
+   *
+   * @param total   сумма кредита
+   * @param percent ставка по кредиту
+   * @param month   срок кредитования
+   * @return размер ежемесячного платежа
+   */
+  public static double payment(int total, double percent, int month) {
+    double left = 0; // 0 точно меньше нашего ответа
+    double right = total; // x точно больше нашего ответа
+    double p = percent / 12 / 100;
+    double total1 = total * p / (1 - Math.pow(1 + p, -month)) * month;
+    while (right - left > ACCURACY) {
+      double mid = (left + right) / 2;
+      double total2 = mid * month;
+      if (total1 == total2) {
+        return mid;
+      }
+      if (total2 < total1) {
+        left = mid;
+      } else {
         right = mid;
       }
     }
