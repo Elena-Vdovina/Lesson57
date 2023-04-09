@@ -34,8 +34,7 @@ public class Homework {
 
     double rateMonth = rate(total, percent);
     double paymentMonth = payment(total, percent, month);
-
-    System.out.printf("Процентная ставка в месяц %.6f%n", rateMonth);
+    calcPayments(total, paymentMonth, rateMonth, month);
   }
 
   /**
@@ -95,4 +94,49 @@ public class Homework {
     return left;
   }
 
+  /**
+   * Расчет графика погашения кредита
+   *
+   * @param total        сумма кредита
+   * @param paymentMonth ежемесячный платеж
+   * @param rateMonth    начисляемые ежемесячно проценты
+   * @param month        срок кредитования
+   */
+  public static void calcPayments(int total, double paymentMonth, double rateMonth, int month) {
+    double balance = paymentMonth * month;
+    double sumPaymentPercent = 0.0;
+    double paymentPercent;
+    double paymentBody;
+    System.out.println("Месяц   Платеж   Проценты    Тело     Остаток");
+    for (
+        int i = 1;
+        i <= month; ++i) {
+      if (sumPaymentPercent > paymentMonth * month - total) {
+        paymentPercent = 0;
+      } else {
+        paymentPercent = balance * rateMonth;
+        if (sumPaymentPercent + paymentPercent > paymentMonth * month - total) {
+          paymentPercent = paymentMonth * month - total - sumPaymentPercent;
+        }
+      }
+      sumPaymentPercent += paymentPercent;
+      if (balance > paymentMonth) {
+        paymentBody = paymentMonth - paymentPercent;
+      } else if (balance <= paymentMonth) {
+        paymentBody = balance - paymentPercent;
+      } else {
+        paymentBody = 0;
+      }
+      if (balance < 0) {
+        balance = 0;
+      } else {
+        balance = balance - paymentBody - paymentPercent;
+      }
+      System.out.printf("%4d   %8.2f  %8.2f  %8.2f  %9.2f%n", i, paymentMonth, paymentPercent,
+          paymentBody, balance);
+    }
+    System.out.printf("Процентная ставка в месяц %.6f%n", rateMonth);
+    System.out.printf("Сумма платежей в счет процентов %.2f%n", sumPaymentPercent);
+    System.out.printf("Долг + проценты %.2f", paymentMonth * month);
+  }
 }
